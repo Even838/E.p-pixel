@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pixel Art</title>
+<style>
+  #colorPalette {
+    margin-bottom: 10px;
+  }
+  .palette-color {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    border: 1px solid #000;
+    cursor: pointer;
+  }
+  canvas {
+    border: 1px solid #000;
+    background-color: #FFFFFF;
+  }
+  body{
+    background-color:#CACACA;
+  }
+  
+  h1{
+   text-shadow: 0.1em 0.1em #333:
+  }
+  
+  
+</style>
+</head>
+
+<body>
+  
+<h1> e.p pixel</h1>
+
+<div id="colorPalette"></div>
+
+<canvas id="pixelCanvas" width="300" height="400"></canvas>
+<input id="color" type="color" value="#000000">
+
+
+<button id="eraser">Borracha</button>
+<button id="gridToggle">Grade</button>
+<button id="download">Baixar</button>
+<button id="lip"> limpar todo </button>
+
+
+
+<select id="gridSize">
+  <option value="99">16x16</option>
+  <option value="33">64x64</option>
+  <option value="20" selected>32×32</option>
+  <option value="10">120×120</option>
+  <option value="5">250×250</option>
+  <option value="4.5">1000×1000</option>
+  
+  
+</select>
+
+
+<script>
+
+
+const canvas = document.getElementById('pixelCanvas');
+
+
+const ctx = canvas.getContext('2d');
+const colorPicker = document.getElementById("color");
+const eraserButton = document.getElementById("eraser");
+const gridToggleButton = document.getElementById("gridToggle");
+const gridSizeSelector = document.getElementById("gridSize");
+const downloadButton = document.getElementById("download");
+const paletteContainer = document.getElementById('colorPalette');
+
+let pixelSize = parseInt(gridSizeSelector.value);
+let currentColor = colorPicker.value;
+let showGrid = false;
+let pixelData = {};
+let colorPalette = [];
+
+
+colorPicker.addEventListener('change', function() {
+  currentColor = this.value;
+  addToPalette(currentColor);
+});
+
+eraserButton.addEventListener('click', function() {
+  currentColor = '#ffffff';
+});
+
+gridToggleButton.addEventListener('click', function() {
+  showGrid = !showGrid;
+  drawCanvas();
+});
+
+gridSizeSelector.addEventListener('change', function() {
+  pixelSize = parseInt(this.value);
+  pixelData = {};
+  drawCanvas();
+});
+
+canvas.addEventListener('click', function(e) {
+  const x = Math.floor(e.offsetX / pixelSize) * pixelSize;
+  const y = Math.floor(e.offsetY / pixelSize) * pixelSize;
+  pixelData[`${x},${y}`] = currentColor;
+  drawCanvas();
+});
+
+
+
+
+document.getElementById
+
+downloadButton.addEventListener('click', function() {
+  const dataURL = canvas.toDataURL('image/png');
+  const link = document.createElement('a');
+  link.download = 'pixel-art.png';
+  link.href = dataURL;
+  link.click();
+});
+
+function addToPalette(color) {
+  if (!colorPalette.includes(color)) {
+    colorPalette.push(color);
+    drawPalette();
+  }
+}
+
+function drawPalette() {
+  paletteContainer.innerHTML = '';
+  colorPalette.forEach(color => {
+    const colorDiv = document.createElement('div');
+    colorDiv.className = 'palette-color';
+    colorDiv.style.backgroundColor = color;
+    colorDiv.onclick = function() { currentColor = color; };
+    paletteContainer.appendChild(colorDiv);
+  });
+}
+document.addEventListener('DOMContentLoaded', (event) => {
+  function lt(){
+    pixelData = {}; // Clear the pixel data
+    drawCanvas(); // Redraw the canvas
+  }
+
+
+
+
+  document.getElementById('lip').addEventListener("click", lt);
+});
+
+
+function drawCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawGrid();
+  drawPixels();
+}
+
+function drawGrid() {
+  if (showGrid) {
+    for (let i = 0; i < canvas.width; i += pixelSize) {
+      for (let j = 0; j < canvas.height; j += pixelSize) {
+        ctx.strokeStyle = '#ddd';
+        ctx.strokeRect(i, j, pixelSize, pixelSize);
+      }
+    }
+  }
+}
+
+
+
+
+function drawPixels() {
+ Object.keys(pixelData).forEach(key => {
+   const [x, y] = key.split(',').map(n => parseInt(n));
+   ctx.fillStyle = pixelData[key];
+   ctx.fillRect(x, y, pixelSize, pixelSize);
+ });
+}
+
+
+
+
+
+</script>
+</body>
+</html>
+ 
