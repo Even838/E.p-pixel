@@ -24,11 +24,6 @@
     background-color:#CACACA;
   }
   
-  h1{
-   text-shadow: 0.1em 0.1em #333:
-  }
-  
-  
 </style>
 </head>
 
@@ -38,7 +33,7 @@
 
 <div id="colorPalette"></div>
 
-<canvas id="pixelCanvas" width="300" height="400"></canvas>
+<canvas id="pixelCanvas" width="300" height="350"></canvas>
 <input id="color" type="color" value="#000000">
 
 
@@ -48,7 +43,6 @@
 <button id="lip"> limpar todo </button>
 
 
-
 <select id="gridSize">
   <option value="99">16x16</option>
   <option value="33">64x64</option>
@@ -56,10 +50,9 @@
   <option value="10">120×120</option>
   <option value="5">250×250</option>
   <option value="4.5">1000×1000</option>
-  
+  <option value="5">2000×2000</option>
   
 </select>
-
 
 <script>
 
@@ -145,9 +138,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     drawCanvas(); // Redraw the canvas
   }
 
-
-
-
   document.getElementById('lip').addEventListener("click", lt);
 });
 
@@ -169,10 +159,8 @@ function drawGrid() {
   }
 }
 
-
-
-
 function drawPixels() {
+  
  Object.keys(pixelData).forEach(key => {
    const [x, y] = key.split(',').map(n => parseInt(n));
    ctx.fillStyle = pixelData[key];
