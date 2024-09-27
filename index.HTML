@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
@@ -55,6 +55,10 @@
             font-size: 1em;
             margin: 5px;
         }
+        a {
+            color: #071DD1;
+            text-decoration: none;
+        }
     </style>
 </head>
 
@@ -96,6 +100,8 @@
         <button id="bac">Mudar Cor de Fundo</button>
     </div>
 
+    <a href=""> projeto 100% Open source saiba mais</a>
+
     <script>
         const canvas = document.getElementById('pixelCanvas');
         const ctx = canvas.getContext('2d');
@@ -106,17 +112,18 @@
         const downloadButton = document.getElementById("download");
         const paletteContainer = document.getElementById('colorPalette');
 
-        let colorPalette = []; // Adicionado para armazenar a paleta de cores
+        let colorPalette = [];
         let pixelSize = parseInt(gridSizeSelector.value);
         let currentColor = colorPicker.value;
         let showGrid = false;
         let layers = [];
         let currentLayerIndex = 0;
         let animationInterval;
+        let isEraserActive = false;
 
         function bac() {
             const newColor = prompt('Digite a nova cor de fundo (ex: #FF0000 ou nome da cor)');
-            canvas.style.backgroundColor = newColor; // Corrigido para mudar a cor de fundo
+            canvas.style.backgroundColor = newColor;
         }
         
         document.getElementById('bac').addEventListener('click', bac);
@@ -127,7 +134,12 @@
         });
 
         eraserButton.addEventListener('click', function() {
-            currentColor = '#FFFFFF';
+            isEraserActive = true;
+        });
+
+        document.getElementById('lápis').addEventListener('click', function() {
+            isEraserActive = false;
+            currentColor = colorPicker.value;
         });
 
         gridToggleButton.addEventListener('click', function() {
@@ -143,7 +155,13 @@
         canvas.addEventListener('click', function(e) {
             const x = Math.floor(e.offsetX / pixelSize) * pixelSize;
             const y = Math.floor(e.offsetY / pixelSize) * pixelSize;
-            layers[currentLayerIndex][`${x},${y}`] = currentColor;
+
+            if (isEraserActive) {
+                delete layers[currentLayerIndex][`${x},${y}`];
+            } else {
+                layers[currentLayerIndex][`${x},${y}`] = currentColor;
+            }
+            
             drawCanvas();
         });
 
@@ -237,19 +255,19 @@
         }
 
         document.getElementById('lip').addEventListener("click", function() {
-            layers[currentLayerIndex] = {}; // Limpa a camada atual
-            drawCanvas(); // Redesenha o canvas
+            layers[currentLayerIndex] = {};
+            drawCanvas();
         });
 
         document.getElementById('startAnimation').addEventListener('click', function() {
-            if (animationInterval) return; // Impede múltiplos intervalos
+            if (animationInterval) return;
             let index = 0;
             animationInterval = setInterval(() => {
                 currentLayerIndex = index;
                 document.getElementById('layerSelect').value = index;
                 drawCanvas();
                 index = (index + 1) % layers.length;
-            }, 500); // Muda de camada a cada 500ms
+            }, 500);
         });
 
         document.getElementById('stopAnimation').addEventListener('click', function() {
@@ -257,9 +275,14 @@
             animationInterval = null;
         });
 
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function(event) {
+                event.preventDefault();
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', (event) => {
             initializeLayers();
         });
     </script>
-</body>
-</html>
+</HTML>
